@@ -1,8 +1,35 @@
+import github from "./db";
+import { useCallback, useEffect, useState } from "react";
+import githubQuery from "./Query";
+
 function App() {
+  const [userName, setUserName] = useState("");
+
+  const fetchData = useCallback(() => {
+    fetch(github.baseURL, {
+      method: "POST",
+      headers: github.headers,
+      body: JSON.stringify(githubQuery),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setUserName(data.data.viewer.name);
+      })
+      .then((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   return (
     <div className="App container mt-5">
       <h1 className="text-primary">
         <i className="bi bi-diagram-2-fill">Repos</i>
+        <p>Hey there {userName}</p>
       </h1>
     </div>
   );
